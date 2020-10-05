@@ -26,8 +26,58 @@ class User_c extends REST_Controller
         $this->load->model('user_m');
     }
 
-    // GET DATA
+    
+    public function cek_login_post()
+    {
+        $post = $this->input->post(null, true);
+        $query = $this->user_m->login($post);
+        
+        if ($query->num_rows() > 0) {
+            $row = $query->row();
+            $params = array(
+                'userid' => $row->user_id,
+                'level' => $row->level
+            );
+            $this->session->set_userdata($params);
+            $this->response([
+                'status' => true,
+                'pesan' => 'Login Berhasil'
+            ],  REST_Controller::HTTP_OK);
+        } else {
+            $this->response([
+                'status' => false,
+                'pesan' => 'Login Gagal! Username atau Password yang Anda Masukkan Salah'
+            ], 502);
+        }
+    }
 
+    public function auth_login_user_post()
+    {
+        $post = $this->input->post(null, true);
+        $query = $this->user_m->cek_login($post);
+        
+        if ($query->num_rows() > 0) {
+            $row = $query->row();
+            $params = array(
+                'userid' => $row->user_id,
+                'level' => $row->level
+            );
+            $this->session->set_userdata($params);
+            $this->response([
+                'status' => true,
+                'pesan' => 'Login Berhasil'
+            ],  REST_Controller::HTTP_OK);
+        } else {
+            $this->response([
+                'status' => false,
+                'pesan' => 'Login Gagal! Username atau Password yang Anda Masukkan Salah'
+            ], 502);
+        }
+    }
+    
+    
+    
+    // GET DATA
     public function get_user_get()
     {
         $id = $this->get('user_id');
@@ -36,7 +86,7 @@ class User_c extends REST_Controller
         } else {
             $data = $this->user_m->get($id)->result_array();
         }
-
+        
         if ($data) {
             $this->response([
                 'status' => true,

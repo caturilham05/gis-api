@@ -107,33 +107,12 @@ class Pengaduan_c extends REST_Controller
         $this->load->library('upload', $config);
         $post = $this->input->post(null, true);
 
-            if (@$_FILES['gambar']['name'] != null) {
-                if ($this->upload->do_upload('gambar')) {
-                    $post['gambar'] = $this->upload->data('file_name');
-                    $this->pengaduan_m->addPengaduan($post);
-
-                    if ($this->db->affected_rows() == 1) {
-                        $this->response([
-                            'status' => true,
-                            'pesan' => 'Pengaduan Berhasil Disimpan'
-                        ],  REST_Controller::HTTP_OK);
-                    }else{
-                        $this->response([
-                            'status' => false,
-                            'error' => 'Pengaduan Gagal Disimpan'
-                        ], 502);
-                    }
-                } else {
-                    $err = $this->upload->display_errors();
-                    $this->response([
-                        'status' => false,
-                        'error' => $err
-                    ], 502);
-                }
-            } else {
-                $post['gambar'] = null;
+        if (@$_FILES['gambar']['name'] != null) {
+            if ($this->upload->do_upload('gambar')) {
+                $post['gambar'] = $this->upload->data('file_name');
                 $this->pengaduan_m->addPengaduan($post);
-                if ($this->db->affected_rows() > 0) {
+
+                if ($this->db->affected_rows() == 1) {
                     $this->response([
                         'status' => true,
                         'pesan' => 'Pengaduan Berhasil Disimpan'
@@ -144,8 +123,85 @@ class Pengaduan_c extends REST_Controller
                         'error' => 'Pengaduan Gagal Disimpan'
                     ], 502);
                 }
+            } else {
+                $err = $this->upload->display_errors();
+                $this->response([
+                    'status' => false,
+                    'error' => $err
+                ], 502);
+            }
+        } else {
+            $post['gambar'] = null;
+            $this->pengaduan_m->addPengaduan($post);
+            if ($this->db->affected_rows() > 0) {
+                $this->response([
+                    'status' => true,
+                    'pesan' => 'Pengaduan Berhasil Disimpan'
+                ],  REST_Controller::HTTP_OK);
+            } else {
+                $this->response([
+                    'status' => false,
+                    'error' => 'Pengaduan Gagal Disimpan'
+                ], 502);
             }
         }
+    }
 
     // END POST DATA
+
+    // PUT DATA
+
+    public function edit_pengaduan_put()
+    {
+        $id = $this->put('id_pengaduan');
+
+        $data = [
+            'status' => $this->put('status'),
+
+        ];
+
+        if ($this->pengaduan_m->pengaduan_edit($data, $id) > 0) {
+            $this->response([
+                'status' => true,
+                'pesan' => 'Status Pengaduan Berhasil Di Update'
+            ], REST_Controller::HTTP_OK);
+        } else {
+            $this->response([
+                'status' => false,
+                'error' => 'Pengaduan Tidak Ditemukan'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+    // END PUT DATA
+
+    // DELETE DATA
+
+    public function hapus_pengaduan_delete()
+    {
+        $id = $this->delete('id_pengaduan');
+
+        if ($id === null) {
+            $this->response([
+                'status' => false,
+                'error' => 'Pengaduan Tidak Ditemukan'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        } else {
+            if ($this->pengaduan_m->pengaduan_delete($id) > 0) {
+                $this->response([
+                    'status' => true,
+                    'user_id' => $id,
+                    'pesan' => 'Pengaduan Berhasil Dihapus',
+                    // 'pesan' => 'User "'.$id.'" Berhasil Dihapus'
+                ], REST_Controller::HTTP_OK);
+            } else {
+                $this->response([
+                    'status' => false,
+                    'error' => 'Pengaduan Tidak Ditemukan'
+                ], REST_Controller::HTTP_NOT_FOUND);
+            }
+        }
+    }
+
+    // END DELETE DATA
 }

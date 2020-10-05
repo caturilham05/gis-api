@@ -2,6 +2,33 @@
 class User_m extends CI_Model
 {
 
+
+    // admin login
+    public function login($post)
+    {
+        $this->db->select('*');
+        $this->db->from('user');
+        $this->db->where('username', $post['username']);
+        $this->db->where('password', sha1($post['password']));
+        $this->db->where('level = "0"');
+        $this->db->limit(1);
+        $query = $this->db->get();
+        return $query;
+    }
+
+    // user login
+    public function cek_login($post)
+    {
+        $this->db->select('*');
+        $this->db->from('user');
+        $this->db->where('username', $post['username']);
+        $this->db->where('password', sha1($post['password']));
+        $this->db->where('level = "1"');
+        $this->db->limit(1);
+        $query = $this->db->get();
+        return $query;
+    }
+
     // API GET MODEL
     public function get($id = null)
     {
@@ -19,16 +46,6 @@ class User_m extends CI_Model
             $this->db->where('user_id', $id);
         }
         $this->db->order_by('user_id', 'DESC');
-        $query = $this->db->get();
-        return $query;
-    }
-
-    public function login($post)
-    {
-        $this->db->select('*');
-        $this->db->from('user');
-        $this->db->where('username', $post['username']);
-        $this->db->where('password', sha1($post['password']));
         $query = $this->db->get();
         return $query;
     }

@@ -96,4 +96,16 @@ class Pengaduan_m extends CI_Model
 
         $this->db->insert('detail_pengaduan', $params);
     }
+
+    public function pengaduan_edit($data, $id)
+    {
+        $this->db->update('detail_pengaduan', $data, ['id_pengaduan' => $id]);
+        return $this->db->affected_rows();
+    }
+
+    public function pengaduan_delete($id)
+    {
+        $this->db->delete('detail_pengaduan', ['id_pengaduan' => $id]);
+        return $this->db->affected_rows();
+    }
 }

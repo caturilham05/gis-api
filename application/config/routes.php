@@ -10,6 +10,12 @@ $route['translate_uri_dashes'] = TRUE;
 | Sample REST API Routes
 | -------------------------------------------------------------------------
 */
+
+// admin login API
+$route['api/admin/auth'] = 'api/admin/user_c/cek_login';
+// USER login API
+$route['api/admin/auth-user'] = 'api/admin/user_c/auth_login_user';
+
 // API USER
 $route['api/admin/get-user'] = 'api/admin/user_c/get_user';
 $route['api/admin/add-user'] = 'api/admin/user_c/add_user';
@@ -34,6 +40,10 @@ $route['api/admin/get-status-selesai'] = 'api/admin/pengaduan_c/statusSelesai';
 
 // POST API PENGADUAN USER
 $route['api/admin/add-pengaduan'] = 'api/admin/pengaduan_c/addPengaduan';
+// PUT API PENGADUAN USER
+$route['api/admin/edit-pengaduan'] = 'api/admin/pengaduan_c/edit_pengaduan';
+// DELETE API PENGADUAN USER
+$route['api/admin/delete-pengaduan'] = 'api/admin/pengaduan_c/hapus_pengaduan';
 
 
 
